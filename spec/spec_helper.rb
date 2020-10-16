@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "git/safe"
+require "git_safe"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

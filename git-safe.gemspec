@@ -1,11 +1,11 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "git/safe/version"
+require "git-safe/version"
 
 Gem::Specification.new do |spec|
   spec.name          = "git-safe"
-  spec.version       = Git::Safe::VERSION
+  spec.version       = GitSafe::VERSION
   spec.authors       = ["Perry Hertler"]
   spec.email         = ["perry@hertler.org"]
 
