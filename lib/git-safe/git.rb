@@ -5,5 +5,9 @@ module GitSafe
     def initialize(options)
       @options = options
     end
+
+    def logger
+
+    end
   end
 end
