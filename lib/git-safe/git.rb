@@ -1,13 +1,10 @@
 module GitSafe
   class Git
-    attr_reader :options
+    attr_reader :options, :working_dir
 
-    def initialize(options)
-      @options = options
-    end
-
-    def logger
-
+    def initialize(working_dir, options)
+      @working_dir = working_dir
+      @options     = options
     end
   end
 end

@@ -4,12 +4,8 @@ require 'git-safe/configuration'
 
 module GitSafe
   class << self
-    def init(options = {})
-      Git.new(configuration.merge(options))
-    end
-
-    def working_dir(options = {})
-      Git.new(configuration.merge(options))
+    def init(working_dir, options = {})
+      Git.new(working_dir, configuration.merge(options))
     end
 
     # A GitSafe configuration object. Must act like a hash and
