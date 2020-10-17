@@ -6,5 +6,9 @@ module GitSafe
       @working_dir = working_dir
       @options     = options
     end
+
+    def clone(remote_uri)
+
+    end
   end
 end
