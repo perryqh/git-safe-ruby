@@ -7,10 +7,11 @@ module GitSafe
     def initialize(work_tree, options)
       @work_tree = work_tree
       @options   = options
+      FileUtils.mkdir_p(work_tree)
     end
 
     def clone(remote_uri)
-      execute_git_cmd("clone --work-tree #{work_tree} #{remote_uri}")
+      execute_git_cmd("clone #{remote_uri} --depth=1 #{work_tree}")
     end
 
     def execute_git_cmd(cmd)
