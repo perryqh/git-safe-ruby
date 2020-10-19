@@ -14,7 +14,8 @@ RSpec.describe GitSafe::Git do
   its(:options) { is_expected.to eq(options) }
 
   describe '#clone' do
-    subject(:clone) { git.clone(remote_uri) }
+    subject(:clone) { git.clone(remote_uri, depth: depth) }
+    let(:depth) { 1 }
     let(:std) { "Cloning into 'spec/support/working-dirs/work'" }
     let(:exit_status) { 0 }
     let(:status) { double(:status, exitstatus: exit_status) }
@@ -25,6 +26,14 @@ RSpec.describe GitSafe::Git do
     it 'clones the provided remote-uri' do
       expect(clone).to eq(std)
       expect(Open3).to have_received(:capture3).with("git clone #{remote_uri} --depth=1 #{work_tree}")
+    end
+
+    context 'when depth provided' do
+      let(:depth) { nil }
+      it 'does not include depth' do
+        expect(clone).to eq(std)
+        expect(Open3).to have_received(:capture3).with("git clone #{remote_uri} #{work_tree}")
+      end
     end
 
     context 'when ssh file provided' do

@@ -10,8 +10,9 @@ module GitSafe
       FileUtils.mkdir_p(work_tree)
     end
 
-    def clone(remote_uri)
-      execute_git_cmd("clone #{remote_uri} --depth=1 #{work_tree}")
+    def clone(remote_uri, depth: nil)
+      depth_cmd = depth ? " --depth=#{depth}" : ''
+      execute_git_cmd("clone #{remote_uri}#{depth_cmd} #{work_tree}")
     end
 
     def execute_git_cmd(cmd)
