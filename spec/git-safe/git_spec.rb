@@ -27,6 +27,19 @@ RSpec.describe GitSafe::Git do
       expect(Open3).to have_received(:capture3).with("git clone #{remote_uri} --depth=1 #{work_tree}")
     end
 
+    context 'when ssh file provided' do
+      # GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_example" git clone example
+
+    end
+
+    context 'when ssh string provided' do
+
+    end
+
+    context 'when ssh cmd provided (gcsr)' do
+
+    end
+
     context 'when error' do
       let(:exit_status) { -1 }
 
@@ -34,5 +47,19 @@ RSpec.describe GitSafe::Git do
         expect { clone }.to raise_error(GitSafe::CommandError)
       end
     end
+  end
+
+  describe '#pull' do
+    context 'when branch is provided'
+
+    context 'when ssh file provided'
+
+    context 'when ssh string provided'
+  end
+
+  describe '#checkout' do
+    context 'when branch provided'
+
+    context 'when sha provided'
   end
 end
