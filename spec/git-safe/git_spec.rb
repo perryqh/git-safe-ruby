@@ -37,8 +37,13 @@ RSpec.describe GitSafe::Git do
     end
 
     context 'when ssh file provided' do
-      # GIT_SSH_COMMAND="ssh -i ~/.ssh/id_rsa_example" git clone example
+      let(:ssh_private_key) { File.join('spec', 'support', 'not-really-a-key') }
+      let(:options) { { ssh_private_key: ssh_private_key } }
 
+      it 'sets the GIT_SSH_COMMAND' do
+        expect(clone).to eq(std)
+        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone #{remote_uri} --depth=1 #{work_tree}")
+      end
     end
 
     context 'when ssh string provided' do
