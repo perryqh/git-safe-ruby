@@ -2,11 +2,12 @@ require 'open3'
 
 module GitSafe
   class Git
-    attr_reader :options, :work_tree
+    attr_reader :options, :work_tree, :ssh_private_key
 
     def initialize(work_tree, options)
-      @work_tree = work_tree
-      @options   = options
+      @work_tree       = work_tree
+      @options         = options
+      @ssh_private_key = options[:ssh_private_key]
       FileUtils.mkdir_p(work_tree)
     end
 
@@ -19,6 +20,7 @@ module GitSafe
       git_cmd                        = "git #{cmd}"
       stdout_str, stderr_str, status = Open3.capture3(git_cmd)
       raise CommandError.new("error executing '#{git_cmd}', status: #{status.exitstatus}, std_error: #{stderr_str}") unless status.exitstatus == 0
+
       [stdout_str, stderr_str].reject { |out| out.nil? || out.strip == '' }.join(',')
     end
   end
