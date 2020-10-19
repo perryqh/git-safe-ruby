@@ -2,6 +2,8 @@ require 'open3'
 
 module GitSafe
   class Git
+    include PrivateKeyFile
+
     attr_reader :options, :work_tree, :ssh_private_key
 
     def initialize(work_tree, options)
@@ -13,11 +15,10 @@ module GitSafe
 
     def clone(remote_uri, depth: nil)
       depth_cmd = depth ? " --depth=#{depth}" : ''
-      execute_git_cmd("clone #{remote_uri}#{depth_cmd} #{work_tree}")
+      execute_git_cmd("#{ssh_cmd}git clone #{remote_uri}#{depth_cmd} #{work_tree}")
     end
 
-    def execute_git_cmd(cmd)
-      git_cmd                        = "git #{cmd}"
+    def execute_git_cmd(git_cmd)
       stdout_str, stderr_str, status = Open3.capture3(git_cmd)
       raise CommandError.new("error executing '#{git_cmd}', status: #{status.exitstatus}, std_error: #{stderr_str}") unless status.exitstatus == 0
 

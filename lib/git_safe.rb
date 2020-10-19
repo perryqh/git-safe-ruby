@@ -1,4 +1,5 @@
 require 'logger'
+require 'git-safe/private_key_file'
 require 'git-safe/command_error'
 require 'git-safe/git'
 require 'git-safe/configuration'
