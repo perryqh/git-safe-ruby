@@ -7,7 +7,7 @@ RSpec.describe GitSafe::Git do
 
   let(:work_tree) { File.join('spec', 'support', 'working-dirs', 'work') }
   let(:remote_uri) { 'https://github.com/perryqh/git-safe-ruby.git' }
-  let(:options) { {} }
+  let(:options) { { logger: ::Logger.new(STDOUT) } }
   subject(:git) { described_class.new(work_tree, options) }
 
   its(:work_tree) { is_expected.to eq(work_tree) }
@@ -37,8 +37,8 @@ RSpec.describe GitSafe::Git do
     end
 
     context 'when ssh file provided' do
-      let(:ssh_private_key) { File.join('spec', 'support', 'not-really-a-key') }
-      let(:options) { { ssh_private_key: ssh_private_key } }
+      let(:ssh_private_key) { File.join(__dir__, '..', 'support', 'not-really-key') }
+      let(:options) { { logger: ::Logger.new(STDOUT), ssh_private_key: ssh_private_key } }
 
       it 'sets ssh private key' do
         expect(git.ssh_private_key).to eq(ssh_private_key)
@@ -51,7 +51,25 @@ RSpec.describe GitSafe::Git do
     end
 
     context 'when ssh string provided' do
+      let(:ssh_private_key) { 'mysshkeystring' }
+      let(:options) { { logger: ::Logger.new(STDOUT), ssh_private_key: ssh_private_key } }
+      let(:tmp_path) { '/a/path/to/ssh/file' }
+      let(:private_key_temp_file) { instance_double(Tempfile, path: tmp_path) }
+      let(:ssh_tempfile) { instance_double(GitSafe::SshTempfile, private_key_temp_file: double(:tmp, path: tmp_path)) }
+      before do
+        allow(GitSafe::SshTempfile).to receive(:new).and_return(ssh_tempfile)
+        allow(ssh_tempfile).to receive(:safe_unlink_private_key_tmp_file)
+      end
 
+      it 'sets the GIT_SSH_COMMAND' do
+        expect(clone).to eq(std)
+        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{tmp_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone #{remote_uri} --depth=1 #{work_tree}")
+      end
+
+      it 'unlinks the tmp file' do
+        clone
+        expect(ssh_tempfile).to have_received(:safe_unlink_private_key_tmp_file)
+      end
     end
 
     context 'when ssh cmd provided (gcsr)' do
