@@ -72,8 +72,17 @@ RSpec.describe GitSafe::Git do
       end
     end
 
-    context 'when ssh cmd provided (gcsr)' do
+    context 'when ssh cmd provided (gcsr). This makes more sense for clone_or_pull' do
+      let(:options) do
+        { clone_command:                       'gcloud source repos clone my-repo <REPO_DIR> --project=pow-play',
+          clone_command_repo_dir_replace_text: '<REPO_DIR>',
+          logger:                              ::Logger.new(STDOUT) }
+      end
 
+      it 'clones the provided remote-uri' do
+        expect(clone).to eq(std)
+        expect(Open3).to have_received(:capture3).with("gcloud source repos clone my-repo #{work_tree} --project=pow-play")
+      end
     end
 
     context 'when error' do

@@ -1,10 +1,11 @@
 module GitSafe
   class Configuration
     OPTIONS = {
-      logger:          ::Logger.new(STDOUT),
-      branch:          'master',
-      remote:          'origin',
-      ssh_private_key: nil, # path or string
+      logger:                              ::Logger.new(STDOUT),
+      branch:                              'master',
+      remote:                              'origin',
+      clone_command_repo_dir_replace_text: '<REPO_DIR>',
+      ssh_private_key:                     nil, # path or string
     }.freeze
 
     # Defines accessors for all OPTIONS

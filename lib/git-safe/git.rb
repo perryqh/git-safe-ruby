@@ -15,8 +15,12 @@ module GitSafe
     end
 
     def clone(remote_uri, depth: nil)
-      depth_cmd = depth ? " --depth=#{depth}" : ''
-      execute_git_cmd("#{ssh_cmd}git clone #{remote_uri}#{depth_cmd} #{work_tree}")
+      if options[:clone_command]
+        execute_git_cmd(options[:clone_command].gsub(options[:clone_command_repo_dir_replace_text], work_tree))
+      else
+        depth_cmd = depth ? " --depth=#{depth}" : ''
+        execute_git_cmd("#{ssh_cmd}git clone #{remote_uri}#{depth_cmd} #{work_tree}")
+      end
     ensure
       safe_unlink_private_key_tmp_file
     end
