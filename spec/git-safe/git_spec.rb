@@ -115,7 +115,7 @@ RSpec.describe GitSafe::Git do
     context 'when branch is not provided' do
       it 'pulls from master' do
         pull
-        expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git origin master")
+        expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git pull origin master")
       end
     end
 
@@ -124,7 +124,7 @@ RSpec.describe GitSafe::Git do
 
       it 'pulls from staging' do
         pull
-        expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git origin staging")
+        expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git pull origin staging")
       end
     end
 
@@ -138,7 +138,7 @@ RSpec.describe GitSafe::Git do
 
       it 'pulls use private key' do
         pull
-        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git origin master")
+        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git pull origin master")
       end
 
       it 'safe_unlink_private_key_tmp_file' do

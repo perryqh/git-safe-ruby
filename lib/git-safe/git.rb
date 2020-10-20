@@ -15,7 +15,7 @@ module GitSafe
     end
 
     def pull(branch: 'master')
-      execute_git_cmd("#{ssh_cmd}git #{git_locale} origin #{branch}")
+      execute_git_cmd("#{ssh_cmd}git #{git_locale} pull origin #{branch}")
     ensure
       safe_unlink_private_key_tmp_file
     end
