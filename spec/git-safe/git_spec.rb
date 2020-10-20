@@ -148,9 +148,37 @@ RSpec.describe GitSafe::Git do
     end
   end
 
+  describe '#init' do
+    subject(:init) { git.init }
+    it 'has a .git directory' do
+      init
+      expect(Dir.exists?(File.join('.git'))).to be_truthy
+    end
+  end
+
+  describe '#status' do
+    subject(:status) { git.status }
+    before { git.init }
+    it { is_expected.to match(/On branch master/) }
+  end
+
   describe '#checkout' do
-    context 'when branch provided'
+    subject(:checkout) { git.checkout(branch: 'master') }
+
+    context 'when branch provided' do
+
+    end
 
     context 'when sha provided'
+  end
+
+  describe '#clone_or_pull' do
+    context 'with local and remote branches provided'
+
+    context 'with local branch provided'
+
+    context 'with remote branch provided'
+
+    context 'with no branches provided'
   end
 end

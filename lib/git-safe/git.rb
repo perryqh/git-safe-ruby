@@ -14,6 +14,14 @@ module GitSafe
       FileUtils.mkdir_p(work_tree)
     end
 
+    def init
+      execute_git_cmd("git #{git_locale} init")
+    end
+
+    def status
+      execute_git_cmd("git #{git_locale} status")
+    end
+
     def pull(branch: 'master')
       execute_git_cmd("#{ssh_cmd}git #{git_locale} pull origin #{branch}")
     ensure
@@ -32,7 +40,11 @@ module GitSafe
     end
 
     def git_locale
-      "--work-tree=#{work_tree} --git-dir=#{work_tree}/.git"
+      "#{work_tree_flag} --git-dir=#{work_tree}/.git"
+    end
+
+    def work_tree_flag
+      "--work-tree=#{work_tree}"
     end
 
     def execute_git_cmd(git_cmd)
