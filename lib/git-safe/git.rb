@@ -22,6 +22,16 @@ module GitSafe
       execute_git_cmd("git #{git_locale} status")
     end
 
+    def checkout(branch: nil, create: false)
+      co = "git #{git_locale} checkout"
+      if branch && create
+        co = "#{co} -b #{branch}"
+      elsif branch
+        co = "#{co} #{branch}"
+      end
+      execute_git_cmd(co)
+    end
+
     def pull(branch: 'master')
       execute_git_cmd("#{ssh_cmd}git #{git_locale} pull origin #{branch}")
     ensure

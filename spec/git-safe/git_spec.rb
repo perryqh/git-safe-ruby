@@ -164,9 +164,18 @@ RSpec.describe GitSafe::Git do
 
   describe '#checkout' do
     subject(:checkout) { git.checkout(branch: 'master') }
+    before do
+      git.init
+      git.checkout(branch: 'staging', create: true)
+      git.checkout(branch: 'master', create: true)
+    end
 
     context 'when branch provided' do
-
+      it 'checks out the branch' do
+        git.checkout(branch: 'staging')
+        expect(git.status).to eq('')
+      end
+      context 'when create flag provided'
     end
 
     context 'when sha provided'
