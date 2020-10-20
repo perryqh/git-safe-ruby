@@ -14,6 +14,12 @@ module GitSafe
       FileUtils.mkdir_p(work_tree)
     end
 
+    def pull(branch: 'master')
+      execute_git_cmd("#{ssh_cmd}git #{git_locale} origin #{branch}")
+    ensure
+      safe_unlink_private_key_tmp_file
+    end
+
     def clone(remote_uri, depth: nil)
       if options[:clone_command]
         execute_git_cmd(options[:clone_command].gsub(options[:clone_command_repo_dir_replace_text], work_tree))
@@ -23,6 +29,10 @@ module GitSafe
       end
     ensure
       safe_unlink_private_key_tmp_file
+    end
+
+    def git_locale
+      "--work-tree=#{work_tree} --git-dir=#{work_tree}/.git"
     end
 
     def execute_git_cmd(git_cmd)

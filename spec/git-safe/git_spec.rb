@@ -39,6 +39,9 @@ RSpec.describe GitSafe::Git do
     context 'when ssh file provided' do
       let(:ssh_private_key) { File.join(__dir__, '..', 'support', 'not-really-key') }
       let(:options) { { logger: ::Logger.new(STDOUT), ssh_private_key: ssh_private_key } }
+      before do
+        allow(git).to receive(:safe_unlink_private_key_tmp_file)
+      end
 
       it 'sets ssh private key' do
         expect(git.ssh_private_key).to eq(ssh_private_key)
@@ -47,6 +50,11 @@ RSpec.describe GitSafe::Git do
       it 'sets the GIT_SSH_COMMAND' do
         expect(clone).to eq(std)
         expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone #{remote_uri} --depth=1 #{work_tree}")
+      end
+
+      it 'safe_unlink_private_key_tmp_file' do
+        clone
+        expect(git).to have_received(:safe_unlink_private_key_tmp_file)
       end
     end
 
@@ -95,11 +103,49 @@ RSpec.describe GitSafe::Git do
   end
 
   describe '#pull' do
-    context 'when branch is provided'
+    subject(:pull) { git.pull }
 
-    context 'when ssh file provided'
+    let(:std) { "pulling'" }
+    let(:exit_status) { 0 }
+    let(:status) { double(:status, exitstatus: exit_status) }
+    before do
+      allow(Open3).to receive(:capture3).and_return(["", std, status])
+    end
 
-    context 'when ssh string provided'
+    context 'when branch is not provided' do
+      it 'pulls from master' do
+        pull
+        expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git origin master")
+      end
+    end
+
+    context 'when branch is provided' do
+      subject(:pull) { git.pull(branch: 'staging') }
+
+      it 'pulls from staging' do
+        pull
+        expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git origin staging")
+      end
+    end
+
+    context 'when ssh file provided' do
+      let(:ssh_private_key) { File.join(__dir__, '..', 'support', 'not-really-key') }
+      let(:options) { { logger: ::Logger.new(STDOUT), ssh_private_key: ssh_private_key } }
+
+      before do
+        allow(git).to receive(:safe_unlink_private_key_tmp_file)
+      end
+
+      it 'pulls use private key' do
+        pull
+        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git origin master")
+      end
+
+      it 'safe_unlink_private_key_tmp_file' do
+        pull
+        expect(git).to have_received(:safe_unlink_private_key_tmp_file)
+      end
+    end
   end
 
   describe '#checkout' do
