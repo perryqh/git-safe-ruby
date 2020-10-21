@@ -214,6 +214,45 @@ RSpec.describe GitSafe::Git do
     end
   end
 
+  describe '#fetch' do
+    subject(:fetch) { git.fetch }
+
+    let(:std) { "fetching'" }
+    let(:exit_status) { 0 }
+    let(:status) { double(:status, exitstatus: exit_status) }
+    before do
+      allow(Open3).to receive(:capture3).and_return(["", std, status])
+    end
+
+    it 'fetches' do
+      fetch
+      expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git fetch")
+    end
+
+    context 'when ssh file provided' do
+      let(:ssh_private_key) { File.join(__dir__, '..', 'support', 'not-really-key') }
+      let(:options) { { logger: ::Logger.new(STDOUT), ssh_private_key: ssh_private_key } }
+
+      before do
+        allow(git).to receive(:safe_unlink_private_key_tmp_file)
+      end
+
+      it 'pulls use private key' do
+        fetch
+        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git fetch")
+      end
+
+      it 'safe_unlink_private_key_tmp_file' do
+        fetch
+        expect(git).to have_received(:safe_unlink_private_key_tmp_file)
+      end
+    end
+  end
+
+  describe '#push' do
+    
+  end
+
   describe '#clone_or_pull' do
     context 'with local and remote branches provided'
 
@@ -223,4 +262,6 @@ RSpec.describe GitSafe::Git do
 
     context 'with no branches provided'
   end
+
+  describe '#clone_or_fetch'
 end
