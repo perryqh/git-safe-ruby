@@ -32,11 +32,10 @@ module GitSafe
     end
 
     def checkout(branch: nil, create: false, sha: nil)
-      co = "git #{git_locale} checkout"
-      if branch && create
-        co = "#{co} -b #{branch}"
-      elsif branch
-        co = "#{co} #{branch}"
+      co          = "git #{git_locale} checkout"
+      create_flag = create ? ' -b' : ''
+      if branch
+        co = "#{co}#{create_flag} #{branch}"
       elsif sha
         co = "#{co} #{sha}"
       end
