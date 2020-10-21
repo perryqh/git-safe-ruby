@@ -1,14 +1,8 @@
 require 'spec_helper'
 
 RSpec.describe GitSafe::Git do
-  after(:each) do
-    FileUtils.rm_rf(work_tree)
-  end
-
-  let(:work_tree) { File.join('spec', 'support', 'working-dirs', 'work') }
+  include_context 'git repo'
   let(:remote_uri) { 'https://github.com/perryqh/git-safe-ruby.git' }
-  let(:options) { { logger: ::Logger.new(STDOUT) } }
-  subject(:git) { described_class.new(work_tree, options) }
 
   its(:work_tree) { is_expected.to eq(work_tree) }
   its(:options) { is_expected.to eq(options) }
@@ -162,10 +156,6 @@ RSpec.describe GitSafe::Git do
     it { is_expected.to match(/On branch master/) }
   end
 
-  let(:add_file_to_working_dir) do
-    File.open("#{work_tree}/my-file.txt", 'w') { |f| f << "my file contents" }
-  end
-
   describe '#add_and_commit' do
     before do
       git.init
@@ -179,15 +169,7 @@ RSpec.describe GitSafe::Git do
 
   describe '#checkout' do
     subject(:checkout) { git.checkout(branch: 'master') }
-    before do
-      git.init
-      add_file_to_working_dir
-      git.add_and_commit('committing my file')
-      git.checkout(branch: 'staging', create: true)
-      File.open("#{work_tree}/my-staging-file.txt", 'w') { |f| f << "my staging file contents" }
-      git.add_and_commit('committing my staging file')
-      git.checkout(branch: 'master')
-    end
+    include_context 'repo with master and staging branches'
 
     context 'when branch provided' do
       it 'checks out the branch' do
@@ -250,9 +232,11 @@ RSpec.describe GitSafe::Git do
   end
 
   describe '#merge' do
-    subject(:merge) {git.merge(current_branch, to_merge_name)}
+    subject(:merge) {git.merge(to_merge_name)}
 
-    it 'merges'
+    it 'merges' do
+
+    end
   end
 
   describe '#push' do

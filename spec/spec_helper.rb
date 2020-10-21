@@ -2,6 +2,7 @@ require "bundler/setup"
 require "git_safe"
 require 'rspec/its'
 require 'pry'
+Dir[File.dirname(__FILE__) + "/support/**/*.rb"].each {|f| require f }
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
