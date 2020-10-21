@@ -27,12 +27,18 @@ module GitSafe
       execute_git_cmd("git #{git_locale} commit -m '#{commit_msg}'")
     end
 
-    def checkout(branch: nil, create: false)
+    def last_commit_sha
+      execute_git_cmd("git #{git_locale} rev-parse HEAD")
+    end
+
+    def checkout(branch: nil, create: false, sha: nil)
       co = "git #{git_locale} checkout"
       if branch && create
         co = "#{co} -b #{branch}"
       elsif branch
         co = "#{co} #{branch}"
+      elsif sha
+        co = "#{co} #{sha}"
       end
       execute_git_cmd(co)
     end

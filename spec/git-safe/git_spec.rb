@@ -202,7 +202,16 @@ RSpec.describe GitSafe::Git do
       end
     end
 
-    context 'when sha provided'
+    context 'when sha provided' do
+      let(:sha) do
+        git.last_commit_sha
+      end
+
+      it 'checks out the provided sha' do
+        git.checkout(sha: sha)
+        expect(git.status).to match(/HEAD detached at #{sha[0..6]}/)
+      end
+    end
   end
 
   describe '#clone_or_pull' do
