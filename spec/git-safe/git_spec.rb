@@ -249,6 +249,12 @@ RSpec.describe GitSafe::Git do
     end
   end
 
+  describe '#merge' do
+    subject(:merge) {git.merge(current_branch, to_merge_name)}
+
+    it 'merges'
+  end
+
   describe '#push' do
     
   end
