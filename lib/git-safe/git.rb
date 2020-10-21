@@ -22,6 +22,11 @@ module GitSafe
       execute_git_cmd("git #{git_locale} status")
     end
 
+    def add_and_commit(commit_msg)
+      execute_git_cmd("git #{git_locale} add .")
+      execute_git_cmd("git #{git_locale} commit -m '#{commit_msg}'")
+    end
+
     def checkout(branch: nil, create: false)
       co = "git #{git_locale} checkout"
       if branch && create

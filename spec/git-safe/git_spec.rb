@@ -162,20 +162,44 @@ RSpec.describe GitSafe::Git do
     it { is_expected.to match(/On branch master/) }
   end
 
+  let(:add_file_to_working_dir) do
+    File.open("#{work_tree}/my-file.txt", 'w') { |f| f << "my file contents" }
+  end
+
+  describe '#add_and_commit' do
+    before do
+      git.init
+      add_file_to_working_dir
+    end
+
+    it 'adds the file and commits' do
+      expect(git.add_and_commit('committing my file')).to match(/1 insertion/)
+    end
+  end
+
   describe '#checkout' do
     subject(:checkout) { git.checkout(branch: 'master') }
     before do
       git.init
+      add_file_to_working_dir
+      git.add_and_commit('committing my file')
       git.checkout(branch: 'staging', create: true)
-      git.checkout(branch: 'master', create: true)
+      File.open("#{work_tree}/my-staging-file.txt", 'w') { |f| f << "my staging file contents" }
+      git.add_and_commit('committing my staging file')
+      git.checkout(branch: 'master')
     end
 
     context 'when branch provided' do
       it 'checks out the branch' do
         git.checkout(branch: 'staging')
-        expect(git.status).to eq('')
+        expect(git.status).to match(/On branch staging/)
+        expect(File.exist?("#{work_tree}/my-staging-file.txt")).to be_truthy
       end
-      context 'when create flag provided'
+
+      it 'adds and commits files to correct branch' do
+        expect(File.exist?("#{work_tree}/my-file.txt")).to be_truthy
+        expect(File.exist?("#{work_tree}/my-staging-file.txt")).to be_falsey
+      end
     end
 
     context 'when sha provided'
