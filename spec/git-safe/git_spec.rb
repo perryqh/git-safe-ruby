@@ -232,15 +232,17 @@ RSpec.describe GitSafe::Git do
   end
 
   describe '#merge' do
-    subject(:merge) {git.merge(to_merge_name)}
+    include_context 'repo with master and staging branches'
 
     it 'merges' do
-
+      git.checkout(branch: 'master')
+      expect(git.merge('staging')).to match(/my-staging-file\.txt/)
+      expect(File.exist?(staging_file))
     end
   end
 
   describe '#push' do
-    
+
   end
 
   describe '#clone_or_pull' do

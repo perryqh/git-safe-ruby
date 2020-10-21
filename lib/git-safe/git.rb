@@ -42,6 +42,10 @@ module GitSafe
       execute_git_cmd(co)
     end
 
+    def merge(to_merge_name)
+      execute_git_cmd("git #{git_locale} merge #{to_merge_name}")
+    end
+
     def fetch
       execute_git_cmd("#{ssh_cmd}git #{git_locale} fetch")
     ensure
