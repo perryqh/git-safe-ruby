@@ -46,6 +46,11 @@ module GitSafe
       execute_git_cmd("git #{git_locale} merge #{to_merge_name}")
     end
 
+    def push(remote: 'origin', branch: 'master', force: false)
+      force_flag = force ? '-f ' : ''
+      execute_git_cmd("git #{git_locale} push #{force_flag}#{remote} #{branch}")
+    end
+
     def fetch
       execute_git_cmd("#{ssh_cmd}git #{git_locale} fetch")
     ensure

@@ -14,7 +14,7 @@ RSpec.describe GitSafe::Git do
     let(:exit_status) { 0 }
     let(:status) { double(:status, exitstatus: exit_status) }
     before do
-      allow(Open3).to receive(:capture3).and_return(["", std, status])
+      allow(Open3).to receive(:capture3).and_return(['', std, status])
     end
 
     it 'clones the provided remote-uri' do
@@ -103,7 +103,7 @@ RSpec.describe GitSafe::Git do
     let(:exit_status) { 0 }
     let(:status) { double(:status, exitstatus: exit_status) }
     before do
-      allow(Open3).to receive(:capture3).and_return(["", std, status])
+      allow(Open3).to receive(:capture3).and_return(['', std, status])
     end
 
     context 'when branch is not provided' do
@@ -203,7 +203,7 @@ RSpec.describe GitSafe::Git do
     let(:exit_status) { 0 }
     let(:status) { double(:status, exitstatus: exit_status) }
     before do
-      allow(Open3).to receive(:capture3).and_return(["", std, status])
+      allow(Open3).to receive(:capture3).and_return(['', std, status])
     end
 
     it 'fetches' do
@@ -242,7 +242,27 @@ RSpec.describe GitSafe::Git do
   end
 
   describe '#push' do
+    context 'defaults' do
+      let(:std) { 'pushing...' }
+      before do
+        allow(Open3).to receive(:capture3).and_return(['', std, double(:status, exitstatus: 0)])
+      end
+      subject(:push) { git.push }
 
+      it 'executes git push' do
+        expect(push).to eq('pushing...')
+        expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git push origin master")
+      end
+
+      context 'with args' do
+        subject(:push) { git.push(remote: 'myorigin', branch: 'staging', force: true) }
+
+        it 'executes git push' do
+          expect(push).to eq('pushing...')
+          expect(Open3).to have_received(:capture3).with("git --work-tree=#{work_tree} --git-dir=#{work_tree}/.git push -f myorigin staging")
+        end
+      end
+    end
   end
 
   describe '#clone_or_pull' do
