@@ -82,6 +82,40 @@ module GitSafe
       "--work-tree=#{work_tree}"
     end
 
+    def add_remote(uri, name: 'origin')
+      execute_git_cmd("git #{git_locale} remote add #{name} #{uri}")
+    end
+
+    def has_remote?
+      git_config&.match(/\[remote/)
+    end
+
+    def remotes
+      return [] unless has_git_config?
+      remote_strs = execute_git_cmd("git #{git_locale} remote -v")
+      return [] if remote_strs == ''
+      remote_strs.split("\n").collect do |remote_str|
+        name, uri, type = remote_str.split(' ')
+        { name: name,
+          uri:  uri,
+          type: type.gsub('(', '').gsub(')', '') }
+      end
+    end
+
+    def git_config
+      File.read(git_config_path) if has_git_config?
+    end
+
+    def has_git_config?
+      File.exists?(git_config_path)
+    end
+
+    def git_config_path
+      "#{work_tree}/.git/config"
+    end
+
+    alias_method :work_tree_is_git_repo?, :has_git_config?
+
     def execute_git_cmd(git_cmd)
       stdout_str, stderr_str, status = Open3.capture3(git_cmd)
       raise CommandError.new("error executing '#{git_cmd}', status: #{status.exitstatus}, std_error: #{stderr_str}") unless status.exitstatus == 0

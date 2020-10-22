@@ -265,15 +265,42 @@ RSpec.describe GitSafe::Git do
     end
   end
 
-  describe '#clone_or_pull' do
-    context 'with local and remote branches provided'
+  its(:work_tree_is_git_repo?) { is_expected.to be_falsey }
+  its(:remotes) { is_expected.to eq([]) }
+  its(:has_remote?) { is_expected.to be_falsey }
 
-    context 'with local branch provided'
+  describe 'remotes' do
+    before { git.init }
 
-    context 'with remote branch provided'
+    let(:remote) { 'https://github.com/perryqh/git-safe-ruby.git' }
+    context 'with default remote name' do
+      before do
+        git.add_remote(remote)
+      end
+      its(:has_remote?) { is_expected.to be_truthy }
+      its(:work_tree_is_git_repo?) { is_expected.to be_truthy }
+      its(:remotes) do
+        is_expected.to eq([{ name: 'origin', uri: remote, type: 'fetch' },
+                           { name: 'origin', uri: remote, type: 'push' }])
+      end
+    end
 
-    context 'with no branches provided'
+    context 'with no remotes' do
+      its(:has_remote?) { is_expected.to be_falsy }
+      its(:work_tree_is_git_repo?) { is_expected.to be_truthy }
+      its(:remotes) { is_expected.to eq([]) }
+    end
+
+    context 'with specified remote name' do
+      before do
+        git.add_remote(remote, name: 'myorig')
+      end
+      its(:has_remote?) { is_expected.to be_truthy }
+      its(:work_tree_is_git_repo?) { is_expected.to be_truthy }
+      its(:remotes) do
+        is_expected.to eq([{ name: 'myorig', uri: remote, type: 'fetch' },
+                           { name: 'myorig', uri: remote, type: 'push' }])
+      end
+    end
   end
-
-  describe '#clone_or_fetch'
 end
