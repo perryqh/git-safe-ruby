@@ -91,9 +91,8 @@ module GitSafe
     end
 
     def remotes
-      return [] unless has_git_config?
-      remote_strs = execute_git_cmd("git #{git_locale} remote -v")
-      return [] if remote_strs == ''
+      return [] unless has_git_config? && remote_strs = execute_git_cmd("git #{git_locale} remote -v")
+      
       remote_strs.split("\n").collect do |remote_str|
         name, uri, type = remote_str.split(' ')
         { name: name,
