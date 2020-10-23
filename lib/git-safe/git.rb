@@ -31,6 +31,10 @@ module GitSafe
       execute_git_cmd("git #{git_locale} rev-parse HEAD")
     end
 
+    def branch_a
+      execute_git_cmd("git #{git_locale} branch -a")
+    end
+
     def checkout(branch: nil, create: false, sha: nil)
       co          = "git #{git_locale} checkout"
       create_flag = create ? ' -b' : ''

@@ -184,6 +184,13 @@ RSpec.describe GitSafe::Git do
       end
     end
 
+    context 'when create' do
+      it 'creates the provided branch' do
+        git.checkout(branch: 'foo', create: true)
+        expect(git.branch_a).to match(/foo/)
+      end
+    end
+
     context 'when sha provided' do
       let(:sha) do
         git.last_commit_sha
