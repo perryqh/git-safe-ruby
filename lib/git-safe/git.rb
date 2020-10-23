@@ -101,6 +101,10 @@ module GitSafe
       end
     end
 
+    def clone_or_fetch_and_merge(source_uri, branch: 'master', remote_branch: nil, depth: nil)
+
+    end
+
     def git_config
       File.read(git_config_path) if has_git_config?
     end

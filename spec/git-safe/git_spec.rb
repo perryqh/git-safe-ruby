@@ -303,4 +303,19 @@ RSpec.describe GitSafe::Git do
       end
     end
   end
+
+  describe '#clone_or_fetch_and_merge' do
+    # if not cloned, clone, fetch, and checkout branch
+    # else fetch checkout branch and merge origin/branch
+    let(:source_uri) { 'https://github.com/perryqh/git-safe-ruby.git' }
+    let(:remote_branch) { 'origin/staging' }
+    let(:branch) { 'staging' }
+    subject(:clone_or_fetch_and_merge) do
+      git.clone_or_fetch_and_merge(source_uri, branch: branch, remote_branch: remote_branch, depth: depth)
+    end
+
+    context 'when not cloned' do
+
+    end
+  end
 end
