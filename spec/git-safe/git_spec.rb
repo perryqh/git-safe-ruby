@@ -311,6 +311,15 @@ RSpec.describe GitSafe::Git do
     end
   end
 
+  describe '#update_config' do
+    it 'updates the config' do
+      git.init
+      git.config_set('user.name' => 'jimmy', 'user.email' => 'jimmy@example.com')
+      expect(git.config_get('user.name')).to match(/jimmy/)
+      expect(git.config_get('user.email')).to match(/jimmy@example\.com/)
+    end
+  end
+
   describe '#clone_or_fetch_and_merge' do
     # if not cloned, clone, fetch, and checkout branch
     # else fetch checkout branch and merge origin/branch

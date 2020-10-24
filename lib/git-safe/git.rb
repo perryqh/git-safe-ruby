@@ -22,6 +22,16 @@ module GitSafe
       execute_git_cmd("git #{git_locale} status")
     end
 
+    def config_set(name_values = {})
+      name_values.keys.each do |key|
+        execute_git_cmd("git #{git_locale} config #{key} #{name_values[key]}")
+      end
+    end
+
+    def config_get(name)
+      execute_git_cmd("git #{git_locale} config #{name}")
+    end
+
     def add_and_commit(commit_msg)
       execute_git_cmd("git #{git_locale} add .")
       execute_git_cmd("git #{git_locale} commit -m '#{commit_msg}'")
