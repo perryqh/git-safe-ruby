@@ -317,12 +317,37 @@ RSpec.describe GitSafe::Git do
     let(:source_uri) { 'https://github.com/perryqh/git-safe-ruby.git' }
     let(:remote_branch) { 'origin/staging' }
     let(:branch) { 'staging' }
+    let(:depth) { nil }
     subject(:clone_or_fetch_and_merge) do
-      git.clone_or_fetch_and_merge(source_uri, branch: branch, remote_branch: remote_branch, depth: depth)
+      git.clone_or_fetch_and_merge(source_uri, branch: branch, depth: depth)
     end
 
     context 'when not cloned' do
+      let(:std) { 'clone me' }
+      let(:exit_status) { 0 }
+      let(:status) { double(:status, exitstatus: exit_status) }
+      before do
+        allow(Open3).to receive(:capture3).and_return(['', std, status])
+      end
 
+      it 'clones' do
+        clone_or_fetch_and_merge
+        expect(Open3).to have_received(:capture3).with("git clone #{remote_uri} #{work_tree}")
+        expect(Open3).to have_received(:capture3).with("git #{git.git_locale} fetch")
+        expect(Open3).to have_received(:capture3).with("git #{git.git_locale} checkout staging")
+        expect(Open3).to have_received(:capture3).with("git #{git.git_locale} merge origin/staging")
+      end
+
+      context 'when already cloned' do
+        it 'does not fetch' do
+          allow(git).to receive(:has_remote?).and_return(true)
+          git.clone_or_fetch_and_merge(source_uri, branch: 'tacos', depth: 1)
+          expect(Open3).to_not have_received(:capture3).with("git clone #{remote_uri} #{work_tree}")
+          expect(Open3).to have_received(:capture3).with("git #{git.git_locale} fetch")
+          expect(Open3).to have_received(:capture3).with("git #{git.git_locale} checkout tacos")
+          expect(Open3).to have_received(:capture3).with("git #{git.git_locale} merge origin/tacos")
+        end
+      end
     end
   end
 end

@@ -96,7 +96,7 @@ module GitSafe
 
     def remotes
       return [] unless has_git_config? && remote_strs = execute_git_cmd("git #{git_locale} remote -v")
-      
+
       remote_strs.split("\n").collect do |remote_str|
         name, uri, type = remote_str.split(' ')
         { name: name,
@@ -105,8 +105,14 @@ module GitSafe
       end
     end
 
-    def clone_or_fetch_and_merge(source_uri, branch: 'master', remote_branch: nil, depth: nil)
+    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil)
+      unless has_remote?
+        clone(remote_uri, depth: depth)
+      end
 
+      fetch
+      checkout(branch: branch)
+      merge("#{remote_name}/#{branch}")
     end
 
     def git_config
