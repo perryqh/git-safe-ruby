@@ -357,6 +357,23 @@ RSpec.describe GitSafe::Git do
           expect(Open3).to have_received(:capture3).with("git #{git.git_locale} merge origin/tacos")
         end
       end
+
+      context 'with config values' do
+        before do
+          allow(git).to receive(:config_set)
+        end
+        let(:config) { { 'user.name' => 'louis', 'user.email' => 'lo@example.com' } }
+
+        subject(:clone_or_fetch_and_merge) do
+          git.clone_or_fetch_and_merge(source_uri, branch: branch, depth: depth,
+                                       config:             config)
+        end
+
+        it 'sets config' do
+          clone_or_fetch_and_merge
+          expect(git).to have_received(:config_set).with(config)
+        end
+      end
     end
   end
 end

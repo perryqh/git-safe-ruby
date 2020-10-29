@@ -24,7 +24,7 @@ module GitSafe
 
     def config_set(name_values = {})
       name_values.keys.each do |key|
-        execute_git_cmd("git #{git_locale} config #{key} #{name_values[key]}")
+        execute_git_cmd("git #{git_locale} config #{key} #{name_values[key]}") if name_values[key]
       end
     end
 
@@ -115,11 +115,12 @@ module GitSafe
       end
     end
 
-    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil)
+    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil, config: {})
       unless has_remote?
         clone(remote_uri, depth: depth)
       end
 
+      config_set(config)
       fetch
       checkout(branch: branch)
       merge("#{remote_name}/#{branch}")
