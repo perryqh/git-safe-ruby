@@ -19,8 +19,18 @@ Or install it yourself as:
     $ gem install git-safe
 
 ## Usage
+Configuration
+```ruby
+require 'git_safe'
+GitPusher.configure do |config|
+  config.logger = Logger.new(STDOUT)
+end
+```
 
-TODO: Write usage instructions here
+Initialize with work_tree and an optional ssh_private_key (string or path)
+```ruby
+git_safe = GitSafe.init('/my/work/tree', ssh_private_key: 'path-to-file-or-string')
+```
 
 ## Development
 

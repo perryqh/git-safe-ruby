@@ -28,7 +28,6 @@ module GitSafe
     #
     # @example
     #   GitSafe.configure do |config|
-    #     config.binary_path          = '/usr/local/bin/git'
     #     config.logger          = Logger.new(STDOUT)
     #   end
     def configure
