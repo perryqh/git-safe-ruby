@@ -191,6 +191,10 @@ RSpec.describe GitSafe::Git do
       end
     end
 
+    it 'knows the last commit timestamp' do
+      expect(git.last_commit_timestamp).to_not be_nil
+    end
+
     context 'when sha provided' do
       let(:sha) do
         git.last_commit_sha
@@ -371,6 +375,34 @@ RSpec.describe GitSafe::Git do
         it 'sets config' do
           clone_or_fetch_and_merge
           expect(git).to have_received(:config_set).with(config)
+        end
+      end
+
+      context 'with force fresh' do
+        subject(:clone_or_fetch_and_merge) do
+          git.clone_or_fetch_and_merge(source_uri,
+                                       branch:            branch,
+                                       force_fresh_clone: true)
+        end
+
+        before do
+          allow(FileUtils).to receive(:rm_rf).and_call_original
+        end
+
+        context 'work_tree does exist' do
+          it 'deletes the dir' do
+            clone_or_fetch_and_merge
+            expect(FileUtils).to have_received(:rm_rf).with(work_tree)
+          end
+        end
+
+        context 'work_tree does NOT exist' do
+          it 'does not delete the dir' do
+            git
+            FileUtils.rm_r(work_tree)
+            clone_or_fetch_and_merge
+            expect(FileUtils).to_not have_received(:rm_rf)
+          end
         end
       end
     end
