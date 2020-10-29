@@ -2,13 +2,13 @@ require 'spec_helper'
 
 RSpec.describe GitSafe::Git do
   include_context 'git repo'
-  let(:remote_uri) { 'https://github.com/perryqh/git-safe-ruby.git' }
+  let(:source_uri) { 'https://github.com/perryqh/mort_calc.git' }
 
   its(:work_tree) { is_expected.to eq(work_tree) }
   its(:options) { is_expected.to eq(options) }
 
   describe '#clone' do
-    subject(:clone) { git.clone(remote_uri, depth: depth) }
+    subject(:clone) { git.clone(source_uri, depth: depth) }
     let(:depth) { 1 }
     let(:std) { "Cloning into 'spec/support/working-dirs/work'" }
     let(:exit_status) { 0 }
@@ -19,14 +19,14 @@ RSpec.describe GitSafe::Git do
 
     it 'clones the provided remote-uri' do
       expect(clone).to eq(std)
-      expect(Open3).to have_received(:capture3).with("git clone #{remote_uri} --depth=1 #{work_tree}")
+      expect(Open3).to have_received(:capture3).with("git clone #{source_uri} --depth=1 #{work_tree}")
     end
 
     context 'when depth provided' do
       let(:depth) { nil }
       it 'does not include depth' do
         expect(clone).to eq(std)
-        expect(Open3).to have_received(:capture3).with("git clone #{remote_uri} #{work_tree}")
+        expect(Open3).to have_received(:capture3).with("git clone #{source_uri} #{work_tree}")
       end
     end
 
@@ -43,7 +43,7 @@ RSpec.describe GitSafe::Git do
 
       it 'sets the GIT_SSH_COMMAND' do
         expect(clone).to eq(std)
-        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone #{remote_uri} --depth=1 #{work_tree}")
+        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{ssh_private_key} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone #{source_uri} --depth=1 #{work_tree}")
       end
 
       it 'safe_unlink_private_key_tmp_file' do
@@ -65,7 +65,7 @@ RSpec.describe GitSafe::Git do
 
       it 'sets the GIT_SSH_COMMAND' do
         expect(clone).to eq(std)
-        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{tmp_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone #{remote_uri} --depth=1 #{work_tree}")
+        expect(Open3).to have_received(:capture3).with("GIT_SSH_COMMAND=\"ssh -i #{tmp_path} -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no\" git clone #{source_uri} --depth=1 #{work_tree}")
       end
 
       it 'unlinks the tmp file' do
@@ -321,9 +321,6 @@ RSpec.describe GitSafe::Git do
   end
 
   describe '#clone_or_fetch_and_merge' do
-    # if not cloned, clone, fetch, and checkout branch
-    # else fetch checkout branch and merge origin/branch
-    let(:source_uri) { 'https://github.com/perryqh/git-safe-ruby.git' }
     let(:remote_branch) { 'origin/staging' }
     let(:branch) { 'staging' }
     let(:depth) { nil }
@@ -341,7 +338,7 @@ RSpec.describe GitSafe::Git do
 
       it 'clones' do
         clone_or_fetch_and_merge
-        expect(Open3).to have_received(:capture3).with("git clone #{remote_uri} #{work_tree}")
+        expect(Open3).to have_received(:capture3).with("git clone #{source_uri} #{work_tree}")
         expect(Open3).to have_received(:capture3).with("git #{git.git_locale} fetch")
         expect(Open3).to have_received(:capture3).with("git #{git.git_locale} checkout staging")
         expect(Open3).to have_received(:capture3).with("git #{git.git_locale} merge origin/staging")
@@ -351,7 +348,7 @@ RSpec.describe GitSafe::Git do
         it 'does not fetch' do
           allow(git).to receive(:has_remote?).and_return(true)
           git.clone_or_fetch_and_merge(source_uri, branch: 'tacos', depth: 1)
-          expect(Open3).to_not have_received(:capture3).with("git clone #{remote_uri} #{work_tree}")
+          expect(Open3).to_not have_received(:capture3).with("git clone #{source_uri} #{work_tree}")
           expect(Open3).to have_received(:capture3).with("git #{git.git_locale} fetch")
           expect(Open3).to have_received(:capture3).with("git #{git.git_locale} checkout tacos")
           expect(Open3).to have_received(:capture3).with("git #{git.git_locale} merge origin/tacos")
