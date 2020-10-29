@@ -41,6 +41,10 @@ module GitSafe
       execute_git_cmd("git #{git_locale} rev-parse HEAD")
     end
 
+    def last_commit_timestamp
+      execute_git_cmd("git #{git_locale} log -1 --format=%cd ")
+    end
+
     def branch_a
       execute_git_cmd("git #{git_locale} branch -a")
     end
@@ -115,12 +119,14 @@ module GitSafe
       end
     end
 
-    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil, config: {})
+    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil, force_fresh_clone: false, git_config: {})
+      delete_work_tree if force_fresh_clone
+
       unless has_remote?
         clone(remote_uri, depth: depth)
       end
 
-      config_set(config)
+      config_set(git_config)
       fetch
       checkout(branch: branch)
       merge("#{remote_name}/#{branch}")
@@ -136,6 +142,10 @@ module GitSafe
 
     def git_config_path
       "#{work_tree}/.git/config"
+    end
+
+    def delete_work_tree
+      FileUtils.rm_rf(work_tree) if Dir.exists?(work_tree)
     end
 
     alias_method :work_tree_is_git_repo?, :has_git_config?

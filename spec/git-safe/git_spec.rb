@@ -365,8 +365,10 @@ RSpec.describe GitSafe::Git do
         let(:config) { { 'user.name' => 'louis', 'user.email' => 'lo@example.com' } }
 
         subject(:clone_or_fetch_and_merge) do
-          git.clone_or_fetch_and_merge(source_uri, branch: branch, depth: depth,
-                                       config:             config)
+          git.clone_or_fetch_and_merge(source_uri,
+                                       branch:     branch,
+                                       depth:      depth,
+                                       git_config: config)
         end
 
         it 'sets config' do
