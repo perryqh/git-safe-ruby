@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{A concurrent-safe way to perform multiple ssh configuration git operations against "origin".}
   spec.description   = %q{Some applications need to access git "origin" from multiple threads or processes with different security access approaches. This gem makes it possible}
-  spec.homepage      = "https://github.com/perrqh/git-safe-ruby"
+  spec.homepage      = "https://rubygems.org/gems/git-safe"
 
 
   # Specify which files should be added to the gem when it is released.
