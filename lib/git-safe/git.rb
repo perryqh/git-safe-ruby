@@ -64,6 +64,10 @@ module GitSafe
       execute_git_cmd("git #{git_locale} merge #{to_merge_name}")
     end
 
+    def reset_local_to_remote(remote_name)
+      execute_git_cmd("git #{git_locale} reset --hard #{remote_name}")
+    end
+
     def push(remote: 'origin', branch: 'master', force: false)
       force_flag = force ? '-f ' : ''
       execute_git_cmd("git #{git_locale} push #{force_flag}#{remote} #{branch}")
@@ -119,7 +123,7 @@ module GitSafe
       end
     end
 
-    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil, force_fresh_clone: false, git_config: {})
+    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil, force_fresh_clone: false, reset_to_remote: true, git_config: {})
       delete_work_tree if force_fresh_clone
 
       unless has_remote?
@@ -129,7 +133,11 @@ module GitSafe
       config_set(git_config)
       fetch
       checkout(branch: branch)
-      merge("#{remote_name}/#{branch}")
+      if reset_to_remote
+        reset_local_to_remote("#{remote_name}/#{branch}")
+      else
+        merge("#{remote_name}/#{branch}")
+      end
     end
 
     def git_config
