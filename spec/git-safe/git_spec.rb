@@ -351,7 +351,7 @@ RSpec.describe GitSafe::Git do
       context 'when already cloned' do
         it 'does not fetch' do
           allow(git).to receive(:has_remote?).and_return(true)
-          git.clone_or_fetch_and_merge(source_uri, branch: 'tacos', depth: 1, reset_to_remote: false)
+          git.clone_or_fetch_and_merge(source_uri, branch: 'tacos', depth: 1)
           expect(Open3).to_not have_received(:capture3).with("git clone #{source_uri} #{work_tree}")
           expect(Open3).to have_received(:capture3).with("git #{git.git_locale} fetch")
           expect(Open3).to have_received(:capture3).with("git #{git.git_locale} checkout tacos")
@@ -369,8 +369,7 @@ RSpec.describe GitSafe::Git do
           git.clone_or_fetch_and_merge(source_uri,
                                        branch:          branch,
                                        depth:           depth,
-                                       git_config:      config,
-                                       reset_to_remote: false)
+                                       git_config:      config)
         end
 
         it 'sets config' do
@@ -383,8 +382,7 @@ RSpec.describe GitSafe::Git do
         subject(:clone_or_fetch_and_merge) do
           git.clone_or_fetch_and_merge(source_uri,
                                        branch:            branch,
-                                       force_fresh_clone: true,
-                                       reset_to_remote:   false)
+                                       force_fresh_clone: true)
         end
 
         before do
@@ -409,7 +407,7 @@ RSpec.describe GitSafe::Git do
 
         context 'when reset_to_remote' do
           subject(:clone_or_fetch_and_merge) do
-            git.clone_or_fetch_and_merge(source_uri, branch: branch, depth: depth)
+            git.clone_or_fetch_and_merge(source_uri, branch: branch, depth: depth, reset_to_remote: true)
           end
 
           it 'resets to remote' do

@@ -123,7 +123,7 @@ module GitSafe
       end
     end
 
-    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil, force_fresh_clone: false, reset_to_remote: true, git_config: {})
+    def clone_or_fetch_and_merge(remote_uri, branch: 'master', remote_name: 'origin', depth: nil, force_fresh_clone: false, reset_to_remote: false, git_config: {})
       delete_work_tree if force_fresh_clone
 
       unless has_remote?
