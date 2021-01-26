@@ -32,8 +32,12 @@ module GitSafe
       execute_git_cmd("git #{git_locale} config #{name}")
     end
 
+    def add(add_paths)
+      execute_git_cmd("git #{git_locale} add #{add_paths}")
+    end
+
     def add_and_commit(commit_msg)
-      execute_git_cmd("git #{git_locale} add .")
+      add('.')
       execute_git_cmd("git #{git_locale} commit -m '#{commit_msg}'")
     end
 
