@@ -156,6 +156,32 @@ RSpec.describe GitSafe::Git do
     it { is_expected.to match(/On branch master/) }
   end
 
+  describe 'add and rm' do
+    before do
+      git.init
+      add_file_to_working_dir
+    end
+
+    it 'adds file' do
+      git.add(add_file_name)
+      expect(git.status).to match(/new file:[\s]+#{add_file_name}/)
+    end
+
+    it 'adds and commits file' do
+      git.add(add_file_name)
+      git.commit('adding my-file')
+      expect(git.status).to match(/working tree clean/)
+      expect(git.log).to match(/adding my-file/)
+    end
+
+    it 'removes files' do
+      git.add(add_file_name)
+      git.commit('adding my-file')
+      git.rm(add_file_name)
+      expect(git.status).to match(/deleted:[\s]+#{add_file_name}/)
+    end
+  end
+
   describe '#add_and_commit' do
     before do
       git.init
@@ -367,9 +393,9 @@ RSpec.describe GitSafe::Git do
 
         subject(:clone_or_fetch_and_merge) do
           git.clone_or_fetch_and_merge(source_uri,
-                                       branch:          branch,
-                                       depth:           depth,
-                                       git_config:      config)
+                                       branch:     branch,
+                                       depth:      depth,
+                                       git_config: config)
         end
 
         it 'sets config' do
