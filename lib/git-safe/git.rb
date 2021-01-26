@@ -22,6 +22,10 @@ module GitSafe
       execute_git_cmd("git #{git_locale} status")
     end
 
+    def log
+      execute_git_cmd("git #{git_locale} log")
+    end
+
     def config_set(name_values = {})
       name_values.keys.each do |key|
         execute_git_cmd("git #{git_locale} config #{key} #{name_values[key]}") if name_values[key]
@@ -32,9 +36,21 @@ module GitSafe
       execute_git_cmd("git #{git_locale} config #{name}")
     end
 
-    def add_and_commit(commit_msg)
-      execute_git_cmd("git #{git_locale} add .")
+    def rm(remove_paths)
+      execute_git_cmd("git #{git_locale} rm #{remove_paths}")
+    end
+
+    def add(add_paths)
+      execute_git_cmd("git #{git_locale} add #{add_paths}")
+    end
+
+    def commit(commit_msg)
       execute_git_cmd("git #{git_locale} commit -m '#{commit_msg}'")
+    end
+
+    def add_and_commit(commit_msg)
+      add('.')
+      commit(commit_msg)
     end
 
     def last_commit_sha
