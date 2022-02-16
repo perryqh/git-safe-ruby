@@ -453,6 +453,7 @@ RSpec.describe GitSafe::Git do
     before do
       git.init
       add_file_to_working_dir
+      allow(git).to receive(:config_set) {"success"}
       allow(git).to receive(:execute_git_cmd) {"success"}
       allow(git).to receive(:commit) {"success"}
       allow(git).to receive(:push) {"success"}
@@ -464,6 +465,7 @@ RSpec.describe GitSafe::Git do
 
     it 'performs a forced push to master from a flattened topic branch' do
       flatten_history
+      expect(git).to have_received(:config_set) {"whatever"}
       expect(git).to have_received(:execute_git_cmd).with("git #{git.git_locale} checkout --orphan flattened") {"whatever"}
       expect(git).to have_received(:commit).with("Commit history flattened") {"whatever"}
       expect(git).to have_received(:push).with(remote: 'origin', branch: 'flattened:master', force: true)
