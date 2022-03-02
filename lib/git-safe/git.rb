@@ -156,6 +156,13 @@ module GitSafe
       end
     end
 
+    def flatten_history
+      config_set(@options[:git_config])
+      execute_git_cmd("git #{git_locale} checkout --orphan flattened")
+      commit("Commit history flattened")
+      push(remote: 'origin', branch: 'flattened:master', force: true)
+    end
+
     def git_config
       File.read(git_config_path) if has_git_config?
     end
