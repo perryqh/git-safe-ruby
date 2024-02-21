@@ -146,7 +146,7 @@ RSpec.describe GitSafe::Git do
     subject(:init) { git.init }
     it 'has a .git directory' do
       init
-      expect(Dir.exists?(File.join('.git'))).to be_truthy
+      expect(Dir.exist?(File.join('.git'))).to be_truthy
     end
   end
 
@@ -446,6 +446,29 @@ RSpec.describe GitSafe::Git do
           end
         end
       end
+    end
+  end
+
+  describe '#flatten_history' do
+    before do
+      git.init
+      add_file_to_working_dir
+      allow(git).to receive(:config_set) {"success"}
+      allow(git).to receive(:execute_git_cmd) {"success"}
+      allow(git).to receive(:commit) {"success"}
+      allow(git).to receive(:push) {"success"}
+    end
+
+    subject(:flatten_history) do
+      git.flatten_history
+    end
+
+    it 'performs a forced push to master from a flattened topic branch' do
+      flatten_history
+      expect(git).to have_received(:config_set) {"whatever"}
+      expect(git).to have_received(:execute_git_cmd).with("git #{git.git_locale} checkout --orphan flattened") {"whatever"}
+      expect(git).to have_received(:commit).with("Commit history flattened") {"whatever"}
+      expect(git).to have_received(:push).with(remote: 'origin', branch: 'flattened:master', force: true)
     end
   end
 end
