@@ -1,6 +1,6 @@
 ## v0.3.2 (2024-02-20)
 * Replace `exists?` with `exist?` - deprecated in ruby 2.2 and removed in 3.2
-* Diffs [0.3.2...0.3.0](https://github.com/g5search/git-safe-ruby/compare/0.3.0...0.3.2) (0.3.1 wasn't tagged)
+* Diffs [0.3.2...0.3.0](https://github.com/perryqh/git-safe-ruby/compare/0.3.0...0.3.2) (0.3.1 wasn't tagged)
 
 ## v0.3.1 (?)
 * ?
